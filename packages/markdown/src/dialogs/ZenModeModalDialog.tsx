@@ -34,6 +34,8 @@ type ZenModeDialogProps = {
   locale: string;
   sdk: DialogAppSDK;
   previewComponents?: PreviewComponents;
+  disableBlocks?: boolean;
+  disableEmbeds?: boolean;
 };
 
 const styles = {
@@ -117,7 +119,13 @@ export const ZenModeModalDialog = (props: ZenModeDialogProps) => {
   }, [editor]);
 
   const actions = React.useMemo(() => {
-    return createMarkdownActions({ sdk: props.sdk, editor, locale: props.locale });
+    return createMarkdownActions({
+      sdk: props.sdk,
+      editor,
+      locale: props.locale,
+      disableBlocks: props.disableBlocks,
+      disableEmbeds: props.disableEmbeds,
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO: Evaluate the dependencies
   }, [editor]);
 
@@ -133,7 +141,14 @@ export const ZenModeModalDialog = (props: ZenModeDialogProps) => {
   return (
     <Grid className={styles.root} data-test-id="zen-mode-markdown-editor">
       <Grid.Item className={styles.topSplit}>
-        <MarkdownToolbar mode="zen" disabled={false} canUploadAssets={false} actions={actions} />
+        <MarkdownToolbar
+          mode="zen"
+          disabled={false}
+          canUploadAssets={false}
+          actions={actions}
+          disableBlocks={props.disableBlocks}
+          disableEmbeds={props.disableEmbeds}
+        />
       </Grid.Item>
 
       <Grid.Item
@@ -209,7 +224,12 @@ export const ZenModeModalDialog = (props: ZenModeDialogProps) => {
 
 export const openZenMode = (
   dialogs: DialogsAPI,
-  options: { initialValue: string; locale: string }
+  options: {
+    initialValue: string;
+    locale: string;
+    disableBlocks?: boolean;
+    disableEmbeds?: boolean;
+  }
 ): Promise<ZenModeResult> => {
   return dialogs.openCurrent({
     width: 'fullWidth',
@@ -219,6 +239,8 @@ export const openZenMode = (
       type: MarkdownDialogType.zenMode,
       initialValue: options.initialValue,
       locale: options.locale,
+      disableBlocks: options.disableBlocks,
+      disableEmbeds: options.disableEmbeds,
     } as MarkdownDialogsParams,
   });
 };

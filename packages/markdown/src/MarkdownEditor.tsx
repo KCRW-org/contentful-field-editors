@@ -43,6 +43,8 @@ export interface MarkdownEditorProps {
   previewComponents?: PreviewComponents;
   onReady?: Function;
   isDisabled?: boolean;
+  disableBlocks?: boolean;
+  disableEmbeds?: boolean;
 }
 
 export function MarkdownEditor(
@@ -95,7 +97,13 @@ export function MarkdownEditor(
   const direction = props.sdk.locales.direction[props.sdk.field.locale] ?? 'ltr';
 
   const actions = React.useMemo(() => {
-    return createMarkdownActions({ sdk: props.sdk, editor, locale: props.sdk.field.locale });
+    return createMarkdownActions({
+      sdk: props.sdk,
+      editor,
+      locale: props.sdk.field.locale,
+      disableBlocks: props.disableBlocks,
+      disableEmbeds: props.disableEmbeds,
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps -- TODO: Evaluate the dependencies
   }, [editor]);
 
@@ -117,6 +125,8 @@ export function MarkdownEditor(
         disabled={isActionDisabled}
         canUploadAssets={canUploadAssets}
         actions={actions}
+        disableEmbeds={props.disableEmbeds}
+        disableBlocks={props.disableBlocks}
       />
       <MarkdownTextarea
         minHeight={props.minHeight}

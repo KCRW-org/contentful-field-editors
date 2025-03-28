@@ -14,8 +14,10 @@ export function createMarkdownActions(props: {
   sdk: KnownSDK;
   editor: InitializedEditorType | null;
   locale: string;
+  disableBlocks?: boolean;
+  disableEmbeds?: boolean;
 }) {
-  const { sdk, editor, locale } = props;
+  const { sdk, editor, locale, disableBlocks, disableEmbeds } = props;
 
   // eslint-disable-next-line -- TODO: describe this disable  @typescript-eslint/ban-types
   const insertAssetsWithConfirmation = async (assets: Array<Object> | null) => {
@@ -114,7 +116,7 @@ export function createMarkdownActions(props: {
       }
     },
     insertTable: async () => {
-      if (!editor) {
+      if (!editor || disableBlocks) {
         return;
       }
       const result = await openInsertTableDialog(sdk.dialogs);
@@ -136,7 +138,7 @@ export function createMarkdownActions(props: {
       sdk.notifier.success('All your links are now references at the bottom of your document.');
     },
     embedExternalContent: async () => {
-      if (!editor) {
+      if (!editor || disableBlocks || disableEmbeds) {
         return;
       }
       const result = await openEmbedExternalContentDialog(sdk.dialogs);
@@ -145,7 +147,7 @@ export function createMarkdownActions(props: {
       }
     },
     addNewMedia: async () => {
-      if (!editor) {
+      if (!editor || disableBlocks || disableEmbeds) {
         return;
       }
       try {
@@ -160,7 +162,7 @@ export function createMarkdownActions(props: {
       }
     },
     linkExistingMedia: async () => {
-      if (!editor) {
+      if (!editor || disableBlocks || disableEmbeds) {
         return;
       }
       try {
@@ -180,6 +182,8 @@ export function createMarkdownActions(props: {
       const result = await openZenMode(sdk.dialogs, {
         initialValue: editor.getContent(),
         locale: props.locale,
+        disableBlocks,
+        disableEmbeds,
       });
 
       editor.setContent(result.value);

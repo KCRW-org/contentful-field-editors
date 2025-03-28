@@ -19,6 +19,8 @@ export type MarkdownDialogsParams =
       type: MarkdownDialogType.zenMode;
       initialValue: string;
       locale: string;
+      disableBlocks?: boolean;
+      disableEmbeds?: boolean;
     }
   | {
       type: MarkdownDialogType.cheatsheet;

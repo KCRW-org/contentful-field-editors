@@ -39,6 +39,8 @@ export const renderMarkdownDialog = (
   } else if (parameters.type === MarkdownDialogType.zenMode) {
     const locale = parameters.locale;
     const initialValue = parameters.initialValue;
+    const disableBlocks = parameters.disableBlocks;
+    const disableEmbeds = parameters.disableEmbeds;
     // eslint-disable-next-line -- TODO: describe this disable  @typescript-eslint/no-explicit-any
     sdk.window.updateHeight('100%' as any);
     return (
@@ -50,6 +52,8 @@ export const renderMarkdownDialog = (
         initialValue={initialValue}
         locale={locale}
         sdk={sdk}
+        disableBlocks={disableBlocks}
+        disableEmbeds={disableEmbeds}
       />
     );
   }

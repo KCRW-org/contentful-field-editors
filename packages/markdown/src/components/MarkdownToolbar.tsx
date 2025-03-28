@@ -98,6 +98,8 @@ interface MarkdownToolbarProps {
   disabled: boolean;
   actions: MarkdownActions;
   mode: 'default' | 'zen';
+  disableBlocks?: boolean;
+  disableEmbeds?: boolean;
 }
 
 function MainButtons(props: MarkdownToolbarProps) {
@@ -139,33 +141,37 @@ function MainButtons(props: MarkdownToolbarProps) {
       >
         <FormatItalicIcon aria-label="Italic" className={styles.icon} />
       </ToolbarButton>
-      <ToolbarButton
-        isDisabled={props.disabled}
-        testId="markdown-action-button-quote"
-        tooltip="Quote"
-        tooltipPlace={tooltipPlace}
-        onClick={props.actions.simple.quote}
-      >
-        <QuoteIcon aria-label="Quote" className={styles.icon} />
-      </ToolbarButton>
-      <ToolbarButton
-        isDisabled={props.disabled}
-        testId="markdown-action-button-ul"
-        tooltip="Unordered list"
-        tooltipPlace={tooltipPlace}
-        onClick={props.actions.simple.ul}
-      >
-        <ListBulletedIcon aria-label="Unordered list" className={styles.icon} />
-      </ToolbarButton>
-      <ToolbarButton
-        isDisabled={props.disabled}
-        testId="markdown-action-button-ol"
-        tooltip="Ordered list"
-        tooltipPlace={tooltipPlace}
-        onClick={props.actions.simple.ol}
-      >
-        <ListNumberedIcon aria-label="Ordered list" className={styles.icon} />
-      </ToolbarButton>
+      {!props.disableBlocks && (
+        <>
+          <ToolbarButton
+            isDisabled={props.disabled}
+            testId="markdown-action-button-quote"
+            tooltip="Quote"
+            tooltipPlace={tooltipPlace}
+            onClick={props.actions.simple.quote}
+          >
+            <QuoteIcon aria-label="Quote" className={styles.icon} />
+          </ToolbarButton>
+          <ToolbarButton
+            isDisabled={props.disabled}
+            testId="markdown-action-button-ul"
+            tooltip="Unordered list"
+            tooltipPlace={tooltipPlace}
+            onClick={props.actions.simple.ul}
+          >
+            <ListBulletedIcon aria-label="Unordered list" className={styles.icon} />
+          </ToolbarButton>
+          <ToolbarButton
+            isDisabled={props.disabled}
+            testId="markdown-action-button-ol"
+            tooltip="Ordered list"
+            tooltipPlace={tooltipPlace}
+            onClick={props.actions.simple.ol}
+          >
+            <ListNumberedIcon aria-label="Ordered list" className={styles.icon} />
+          </ToolbarButton>
+        </>
+      )}
       <ToolbarButton
         isDisabled={props.disabled}
         testId="markdown-action-button-link"
@@ -179,7 +185,7 @@ function MainButtons(props: MarkdownToolbarProps) {
   );
 }
 
-function AdditionalButtons(props: MarkdownToolbarProps) {
+function NonBlockAdditionalButtons(props: MarkdownToolbarProps) {
   const tooltipPlace = props.mode === 'zen' ? 'bottom' : 'top';
   return (
     <>
@@ -192,6 +198,61 @@ function AdditionalButtons(props: MarkdownToolbarProps) {
       >
         <Icons.Strikethrough label="Strike out" className={styles.icon} />
       </ToolbarButton>
+
+      <ToolbarButton
+        isDisabled={props.disabled}
+        testId="markdown-action-button-special"
+        tooltip="Insert special character"
+        tooltipPlace={tooltipPlace}
+        onClick={props.actions.insertSpecialCharacter}
+      >
+        <Icons.SpecialChar label="Insert special character" className={styles.icon} />
+      </ToolbarButton>
+    </>
+  );
+}
+
+function AdditionalActionButtons(props: MarkdownToolbarProps) {
+  const tooltipPlace = props.mode === 'zen' ? 'bottom' : 'top';
+  return (
+    <>
+      <ToolbarButton
+        isDisabled={props.disabled}
+        testId="markdown-action-button-organizeLinks"
+        tooltip="Organize links"
+        tooltipPlace={tooltipPlace}
+        onClick={props.actions.organizeLinks}
+      >
+        <Icons.OrgLinks label="Organize links" className={styles.icon} />
+      </ToolbarButton>
+      <ToolbarButton
+        isDisabled={props.disabled}
+        testId="markdown-action-button-undo"
+        tooltip="Undo"
+        tooltipPlace={tooltipPlace}
+        onClick={props.actions.history.undo}
+      >
+        <Icons.Undo label="Undo" className={styles.icon} />
+      </ToolbarButton>
+      <ToolbarButton
+        isDisabled={props.disabled}
+        testId="markdown-action-button-redo"
+        tooltip="Redo"
+        tooltipPlace={tooltipPlace}
+        onClick={props.actions.history.redo}
+      >
+        <Icons.Redo label="Redo" className={styles.icon} />
+      </ToolbarButton>
+    </>
+  );
+}
+
+function AdditionalButtons(props: MarkdownToolbarProps) {
+  const tooltipPlace = props.mode === 'zen' ? 'bottom' : 'top';
+  return (
+    <>
+      <NonBlockAdditionalButtons {...props} />
+
       <ToolbarButton
         isDisabled={props.disabled}
         testId="markdown-action-button-code"
@@ -228,15 +289,17 @@ function AdditionalButtons(props: MarkdownToolbarProps) {
       >
         <Icons.Dedent label="Decrease indentation" className={styles.icon} />
       </ToolbarButton>
-      <ToolbarButton
-        isDisabled={props.disabled}
-        testId="markdown-action-button-embed"
-        tooltip="Embed external content"
-        tooltipPlace={tooltipPlace}
-        onClick={props.actions.embedExternalContent}
-      >
-        <Icons.Cubes label="Embed external content" className={styles.icon} />
-      </ToolbarButton>
+      {!props.disableEmbeds && (
+        <ToolbarButton
+          isDisabled={props.disabled}
+          testId="markdown-action-button-embed"
+          tooltip="Embed external content"
+          tooltipPlace={tooltipPlace}
+          onClick={props.actions.embedExternalContent}
+        >
+          <Icons.Cubes label="Embed external content" className={styles.icon} />
+        </ToolbarButton>
+      )}
       <ToolbarButton
         isDisabled={props.disabled}
         testId="markdown-action-button-table"
@@ -246,42 +309,8 @@ function AdditionalButtons(props: MarkdownToolbarProps) {
       >
         <Icons.Table label="Insert table" className={styles.icon} />
       </ToolbarButton>
-      <ToolbarButton
-        isDisabled={props.disabled}
-        testId="markdown-action-button-special"
-        tooltip="Insert special character"
-        tooltipPlace={tooltipPlace}
-        onClick={props.actions.insertSpecialCharacter}
-      >
-        <Icons.SpecialChar label="Insert special character" className={styles.icon} />
-      </ToolbarButton>
-      <ToolbarButton
-        isDisabled={props.disabled}
-        testId="markdown-action-button-organizeLinks"
-        tooltip="Organize links"
-        tooltipPlace={tooltipPlace}
-        onClick={props.actions.organizeLinks}
-      >
-        <Icons.OrgLinks label="Organize links" className={styles.icon} />
-      </ToolbarButton>
-      <ToolbarButton
-        isDisabled={props.disabled}
-        testId="markdown-action-button-undo"
-        tooltip="Undo"
-        tooltipPlace={tooltipPlace}
-        onClick={props.actions.history.undo}
-      >
-        <Icons.Undo label="Undo" className={styles.icon} />
-      </ToolbarButton>
-      <ToolbarButton
-        isDisabled={props.disabled}
-        testId="markdown-action-button-redo"
-        tooltip="Redo"
-        tooltipPlace={tooltipPlace}
-        onClick={props.actions.history.redo}
-      >
-        <Icons.Redo label="Redo" className={styles.icon} />
-      </ToolbarButton>
+
+      <AdditionalActionButtons {...props} />
     </>
   );
 }
@@ -294,24 +323,33 @@ export function DefaultMarkdownToolbar(props: MarkdownToolbarProps) {
       <Flex justifyContent="space-between" flexWrap="wrap">
         <Flex flexWrap="wrap">
           <MainButtons {...props} />
-          <ToolbarButton
-            isDisabled={props.disabled}
-            testId="markdown-action-button-toggle-additional"
-            tooltip={showAdditional ? 'Hide additional actions' : 'More actions'}
-            onClick={() => {
-              setShowAdditional(!showAdditional);
-            }}
-          >
-            <MoreHorizontalIcon className={styles.icon} />
-          </ToolbarButton>
+          {props.disableBlocks ? (
+            <>
+              <NonBlockAdditionalButtons {...props} />
+              <AdditionalActionButtons {...props} />
+            </>
+          ) : (
+            <ToolbarButton
+              isDisabled={props.disabled}
+              testId="markdown-action-button-toggle-additional"
+              tooltip={showAdditional ? 'Hide additional actions' : 'More actions'}
+              onClick={() => {
+                setShowAdditional(!showAdditional);
+              }}
+            >
+              <MoreHorizontalIcon className={styles.icon} />
+            </ToolbarButton>
+          )}
         </Flex>
         <Flex>
-          <InsertLinkSelector
-            disabled={props.disabled}
-            onSelectExisting={props.actions.linkExistingMedia}
-            onAddNew={props.actions.addNewMedia}
-            canAddNew={props.canUploadAssets}
-          />
+          {!props.disableBlocks && !props.disableEmbeds && (
+            <InsertLinkSelector
+              disabled={props.disabled}
+              onSelectExisting={props.actions.linkExistingMedia}
+              onAddNew={props.actions.addNewMedia}
+              canAddNew={props.canUploadAssets}
+            />
+          )}
           <ToolbarButton
             isDisabled={props.disabled}
             testId="markdown-action-button-zen"
@@ -341,15 +379,24 @@ export function ZenMarkdownToolbar(props: MarkdownToolbarProps) {
       <Flex justifyContent="space-between" alignItems="flex-start">
         <Flex flexWrap="wrap">
           <MainButtons {...props} />
-          <AdditionalButtons {...props} />
+          {props.disableBlocks ? (
+            <>
+              <NonBlockAdditionalButtons {...props} />
+              <AdditionalActionButtons {...props} />
+            </>
+          ) : (
+            <AdditionalButtons {...props} />
+          )}
         </Flex>
         <Flex>
-          <InsertLinkSelector
-            disabled={props.disabled}
-            onSelectExisting={props.actions.linkExistingMedia}
-            onAddNew={props.actions.addNewMedia}
-            canAddNew={props.canUploadAssets}
-          />
+          {!props.disableBlocks && !props.disableEmbeds && (
+            <InsertLinkSelector
+              disabled={props.disabled}
+              onSelectExisting={props.actions.linkExistingMedia}
+              onAddNew={props.actions.addNewMedia}
+              canAddNew={props.canUploadAssets}
+            />
+          )}
           <IconButton
             testId="markdown-action-button-zen-close"
             variant="secondary"
